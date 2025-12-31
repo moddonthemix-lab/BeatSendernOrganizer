@@ -1,0 +1,11 @@
+{
+  "genre_emails": {
+    "hip-hop": ["producer1@example.com", "producer2@example.com"],
+    "trap": ["producer3@example.com"],
+    "rnb": ["artist1@example.com"],
+    "pop": ["label1@example.com"],
+    "electronic": ["dj1@example.com", "dj2@example.com"]
+  },
+  "email_subject_template": "New {genre} Beat: {filename}",
+  "email_body_template": "Hi,\n\nPlease find attached a new {genre} beat: {filename}\n\nBest regards"
+}
