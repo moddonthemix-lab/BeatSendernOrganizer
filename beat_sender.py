@@ -28,6 +28,20 @@ class BeatSender:
         with open(self.config_file, 'r') as f:
             return json.load(f)
 
+    def get_genre_artists(self, genre: str) -> List[dict]:
+        """
+        Get artists for a specific genre.
+
+        Args:
+            genre: Genre name
+
+        Returns:
+            List of artist dictionaries with 'name' and 'email' keys
+        """
+        genres = self.config.get('genres', {})
+        genre_data = genres.get(genre.lower(), {})
+        return genre_data.get('artists', [])
+
     def get_genre_emails(self, genre: str) -> List[str]:
         """
         Get email addresses for a specific genre.
@@ -38,16 +52,64 @@ class BeatSender:
         Returns:
             List of email addresses
         """
-        genre_emails = self.config.get('genre_emails', {})
-        return genre_emails.get(genre.lower(), [])
+        artists = self.get_genre_artists(genre)
+        return [artist['email'] for artist in artists]
 
-    def organize_and_send_beat(self, beat_file: str, genre: str) -> dict:
+    def list_available_artists(self, genre: str) -> None:
+        """
+        Display available artists for a genre.
+
+        Args:
+            genre: Genre name
+        """
+        artists = self.get_genre_artists(genre)
+
+        if not artists:
+            print(f"⚠ No artists configured for genre: {genre}")
+            return
+
+        print(f"\n👥 Artists in {genre} genre:")
+        for idx, artist in enumerate(artists, 1):
+            print(f"  {idx}. {artist['name']} ({artist['email']})")
+
+    def send_beat_to_artist(self, beat_path: Path, artist: dict, genre: str) -> bool:
+        """
+        Send a beat to a specific artist.
+
+        Args:
+            beat_path: Path to the beat file
+            artist: Artist dictionary with 'name' and 'email'
+            genre: Genre of the beat
+
+        Returns:
+            True if sent successfully
+        """
+        subject_template = self.config.get('email_subject_template',
+                                          'New {genre} Beat: {filename}')
+        body_template = self.config.get('email_body_template',
+                                       'Please find attached a new {genre} beat.')
+
+        subject = subject_template.format(
+            genre=genre,
+            filename=beat_path.name,
+            artist_name=artist['name']
+        )
+        body = body_template.format(
+            genre=genre,
+            filename=beat_path.name,
+            artist_name=artist['name']
+        )
+
+        return self.sender.send_beat(beat_path, artist['email'], subject, body)
+
+    def organize_and_send_beat(self, beat_file: str, genre: str, artist_indices: List[int] = None) -> dict:
         """
         Organize a beat file and send it to the corresponding email addresses.
 
         Args:
             beat_file: Path to the beat file
             genre: Genre of the beat
+            artist_indices: Optional list of artist indices (1-based) to send to. If None, sends to all.
 
         Returns:
             Dictionary with results
@@ -55,37 +117,50 @@ class BeatSender:
         # Organize the beat
         organized_path = self.organizer.organize_beat(beat_file, genre)
 
-        # Get recipient emails for this genre
-        recipients = self.get_genre_emails(genre)
+        # Get artists for this genre
+        artists = self.get_genre_artists(genre)
 
-        if not recipients:
-            print(f"⚠ No email addresses configured for genre: {genre}")
+        if not artists:
+            print(f"⚠ No artists configured for genre: {genre}")
             return {'organized': True, 'sent': 0, 'failed': 0}
 
-        # Prepare email content
-        subject_template = self.config.get('email_subject_template',
-                                          'New {genre} Beat: {filename}')
-        body_template = self.config.get('email_body_template',
-                                       'Please find attached a new {genre} beat.')
+        # Filter artists if specific indices provided
+        if artist_indices:
+            selected_artists = []
+            for idx in artist_indices:
+                if 1 <= idx <= len(artists):
+                    selected_artists.append(artists[idx - 1])
+                else:
+                    print(f"⚠ Invalid artist index: {idx}")
+            artists = selected_artists
 
-        subject = subject_template.format(genre=genre, filename=organized_path.name)
-        body = body_template.format(genre=genre, filename=organized_path.name)
+        if not artists:
+            print(f"⚠ No valid artists selected")
+            return {'organized': True, 'sent': 0, 'failed': 0}
 
-        # Send to all recipients
-        results = self.sender.send_beats_to_recipients(organized_path, recipients, subject, body)
+        # Send to selected artists
+        sent = 0
+        failed = 0
+
+        for artist in artists:
+            if self.send_beat_to_artist(organized_path, artist, genre):
+                sent += 1
+            else:
+                failed += 1
 
         return {
             'organized': True,
-            'sent': results['success'],
-            'failed': results['failed']
+            'sent': sent,
+            'failed': failed
         }
 
-    def send_existing_beats_by_genre(self, genre: str) -> dict:
+    def send_existing_beats_by_genre(self, genre: str, artist_indices: List[int] = None) -> dict:
         """
-        Send all existing beats of a specific genre to the configured email addresses.
+        Send all existing beats of a specific genre to the configured artists.
 
         Args:
             genre: Genre name
+            artist_indices: Optional list of artist indices to send to. If None, sends to all.
 
         Returns:
             Dictionary with results
@@ -96,28 +171,36 @@ class BeatSender:
             print(f"⚠ No beats found for genre: {genre}")
             return {'sent': 0, 'failed': 0}
 
-        recipients = self.get_genre_emails(genre)
+        # Get artists for this genre
+        artists = self.get_genre_artists(genre)
 
-        if not recipients:
-            print(f"⚠ No email addresses configured for genre: {genre}")
+        if not artists:
+            print(f"⚠ No artists configured for genre: {genre}")
+            return {'sent': 0, 'failed': 0}
+
+        # Filter artists if specific indices provided
+        if artist_indices:
+            selected_artists = []
+            for idx in artist_indices:
+                if 1 <= idx <= len(artists):
+                    selected_artists.append(artists[idx - 1])
+                else:
+                    print(f"⚠ Invalid artist index: {idx}")
+            artists = selected_artists
+
+        if not artists:
+            print(f"⚠ No valid artists selected")
             return {'sent': 0, 'failed': 0}
 
         total_sent = 0
         total_failed = 0
 
-        # Prepare email templates
-        subject_template = self.config.get('email_subject_template',
-                                          'New {genre} Beat: {filename}')
-        body_template = self.config.get('email_body_template',
-                                       'Please find attached a new {genre} beat.')
-
         for beat_path in beats:
-            subject = subject_template.format(genre=genre, filename=beat_path.name)
-            body = body_template.format(genre=genre, filename=beat_path.name)
-
-            results = self.sender.send_beats_to_recipients(beat_path, recipients, subject, body)
-            total_sent += results['success']
-            total_failed += results['failed']
+            for artist in artists:
+                if self.send_beat_to_artist(beat_path, artist, genre):
+                    total_sent += 1
+                else:
+                    total_failed += 1
 
         return {'sent': total_sent, 'failed': total_failed}
 
@@ -154,17 +237,21 @@ class BeatSender:
     def list_configuration(self) -> None:
         """Display current configuration."""
         print("\n📋 Current Configuration:")
-        print("\nGenre Email Mappings:")
+        print("\n👥 Genres and Artists:")
 
-        genre_emails = self.config.get('genre_emails', {})
+        genres = self.config.get('genres', {})
 
-        if not genre_emails:
-            print("  No genre mappings configured")
+        if not genres:
+            print("  No genres configured")
         else:
-            for genre, emails in genre_emails.items():
-                print(f"  {genre}:")
-                for email in emails:
-                    print(f"    - {email}")
+            for genre, genre_data in genres.items():
+                artists = genre_data.get('artists', [])
+                print(f"\n  {genre.upper()}:")
+                if artists:
+                    for idx, artist in enumerate(artists, 1):
+                        print(f"    {idx}. {artist['name']} - {artist['email']}")
+                else:
+                    print("    No artists configured")
 
         print("\n📁 Organized Beats:")
         all_beats = self.organizer.get_all_beats()

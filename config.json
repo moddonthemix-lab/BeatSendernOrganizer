@@ -1,11 +1,34 @@
 {
-  "genre_emails": {
-    "hip-hop": ["producer1@example.com", "producer2@example.com"],
-    "trap": ["producer3@example.com"],
-    "rnb": ["artist1@example.com"],
-    "pop": ["label1@example.com"],
-    "electronic": ["dj1@example.com", "dj2@example.com"]
+  "genres": {
+    "hip-hop": {
+      "artists": [
+        {"name": "Jay Producer", "email": "jay@example.com"},
+        {"name": "Mike Beats", "email": "mike@example.com"}
+      ]
+    },
+    "trap": {
+      "artists": [
+        {"name": "Trap Master", "email": "trapmaster@example.com"},
+        {"name": "Bass Heavy", "email": "bassheavy@example.com"}
+      ]
+    },
+    "rnb": {
+      "artists": [
+        {"name": "Soul Singer", "email": "soul@example.com"}
+      ]
+    },
+    "pop": {
+      "artists": [
+        {"name": "Pop Label A&R", "email": "ar@poplabel.com"}
+      ]
+    },
+    "electronic": {
+      "artists": [
+        {"name": "DJ Electro", "email": "electro@example.com"},
+        {"name": "Techno Producer", "email": "techno@example.com"}
+      ]
+    }
   },
   "email_subject_template": "New {genre} Beat: {filename}",
-  "email_body_template": "Hi,\n\nPlease find attached a new {genre} beat: {filename}\n\nBest regards"
+  "email_body_template": "Hi {artist_name},\n\nPlease find attached a new {genre} beat: {filename}\n\nBest regards"
 }

@@ -5,11 +5,14 @@ A Python application that organizes beat files by genre and automatically sends 
 ## Features
 
 - **Genre-based Organization**: Automatically organizes beat files into folders by genre
-- **Email Distribution**: Sends beats to configured email addresses based on genre
+- **Artist Management**: Manage artists under each genre with names and email addresses
+- **Email Distribution**: Sends beats to configured artists based on genre
+- **Selective Sending**: Choose specific artists to send to, or send to all artists in a genre
 - **Multiple Format Support**: Works with MP3, WAV, FLAC, AIFF, OGG, M4A, and WMA files
-- **Flexible Configuration**: JSON-based configuration for genre-to-email mapping
+- **Flexible Configuration**: JSON-based configuration for genre-to-artist mappings
 - **CLI Interface**: Easy-to-use command-line interface
 - **Batch Operations**: Send individual beats or all beats at once
+- **Personalized Emails**: Email templates with artist name personalization
 
 ## Installation
 
@@ -41,26 +44,58 @@ A Python application that organizes beat files by genre and automatically sends 
 
    **For Gmail users**: You'll need to create an [App Password](https://support.google.com/accounts/answer/185833) instead of using your regular password.
 
-4. **Configure genre-to-email mappings**:
-   Edit `config.json` to set up which email addresses should receive beats for each genre:
+4. **Configure genres and artists**:
+   Edit `config.json` to set up artists for each genre:
    ```json
    {
-     "genre_emails": {
-       "hip-hop": ["producer1@example.com", "producer2@example.com"],
-       "trap": ["producer3@example.com"],
-       "rnb": ["artist1@example.com"]
+     "genres": {
+       "hip-hop": {
+         "artists": [
+           {"name": "Jay Producer", "email": "jay@example.com"},
+           {"name": "Mike Beats", "email": "mike@example.com"}
+         ]
+       },
+       "trap": {
+         "artists": [
+           {"name": "Trap Master", "email": "trapmaster@example.com"}
+         ]
+       }
      }
    }
    ```
 
 ## Usage
 
-### Organize and Send a Beat
+### List Artists for a Genre
 
-Organize a beat file by genre and send it to the configured email addresses:
+See all artists configured for a specific genre:
+
+```bash
+python main.py artists hip-hop
+```
+
+This will show:
+```
+👥 Artists in hip-hop genre:
+  1. Jay Producer (jay@example.com)
+  2. Mike Beats (mike@example.com)
+```
+
+### Organize and Send a Beat to All Artists
+
+Organize a beat file by genre and send it to all artists in that genre:
 
 ```bash
 python main.py organize path/to/beat.mp3 hip-hop
+```
+
+### Organize and Send to Specific Artists
+
+Send a beat to specific artists only (use artist indices from the `artists` command):
+
+```bash
+# Send to artists 1 and 2 only
+python main.py organize path/to/beat.mp3 hip-hop --artists 1 2
 ```
 
 ### Organize Only (Don't Send)
@@ -71,12 +106,20 @@ If you want to organize a beat without sending it:
 python main.py organize path/to/beat.mp3 trap --no-send
 ```
 
-### Send Beats by Genre
+### Send Previously Organized Beats
 
-Send all previously organized beats of a specific genre:
+Send all previously organized beats of a specific genre to all artists:
 
 ```bash
 python main.py send --genre hip-hop
+```
+
+### Send to Specific Artists Only
+
+Send previously organized beats to specific artists:
+
+```bash
+python main.py send --genre hip-hop --artists 1 3
 ```
 
 ### Send All Beats
@@ -108,7 +151,7 @@ BeatSendernOrganizer/
 ├── email_sender.py         # Email sending functionality
 ├── beat_sender.py          # Main application logic
 ├── main.py                 # CLI interface
-├── config.json             # Genre-to-email mappings
+├── config.json             # Genre and artist configurations
 ├── .env                    # Email credentials (not in git)
 ├── .env.example            # Example environment file
 └── requirements.txt        # Python dependencies
@@ -122,13 +165,14 @@ You can customize email subject and body templates in `config.json`:
 
 ```json
 {
-  "genre_emails": { ... },
+  "genres": { ... },
   "email_subject_template": "New {genre} Beat: {filename}",
-  "email_body_template": "Hi,\n\nPlease find attached a new {genre} beat: {filename}\n\nBest regards"
+  "email_body_template": "Hi {artist_name},\n\nPlease find attached a new {genre} beat: {filename}\n\nBest regards"
 }
 ```
 
 Available template variables:
+- `{artist_name}`: The name of the artist receiving the email
 - `{genre}`: The genre of the beat
 - `{filename}`: The name of the beat file
 
@@ -144,7 +188,7 @@ Available template variables:
 
 ## Examples
 
-### Example 1: Add and send a new hip-hop beat
+### Example 1: Add and send a new hip-hop beat to all artists
 
 ```bash
 python main.py organize "/path/to/my-new-beat.mp3" hip-hop
@@ -152,9 +196,30 @@ python main.py organize "/path/to/my-new-beat.mp3" hip-hop
 
 This will:
 1. Copy the beat to `beats/hip-hop/my-new-beat.mp3`
-2. Send it to all email addresses configured for the "hip-hop" genre
+2. Send it to all artists configured for the "hip-hop" genre
 
-### Example 2: Organize multiple beats without sending
+### Example 2: Send to specific artists only
+
+First, check who the artists are:
+
+```bash
+python main.py artists hip-hop
+```
+
+Output:
+```
+👥 Artists in hip-hop genre:
+  1. Jay Producer (jay@example.com)
+  2. Mike Beats (mike@example.com)
+```
+
+Then send to specific artists (e.g., only Jay Producer):
+
+```bash
+python main.py organize "/path/to/beat.mp3" hip-hop --artists 1
+```
+
+### Example 3: Organize multiple beats without sending
 
 ```bash
 python main.py organize "beat1.mp3" trap --no-send
@@ -162,13 +227,13 @@ python main.py organize "beat2.mp3" trap --no-send
 python main.py organize "beat3.mp3" trap --no-send
 ```
 
-Then send all trap beats at once:
+Then send all trap beats to specific artists:
 
 ```bash
-python main.py send --genre trap
+python main.py send --genre trap --artists 1 2
 ```
 
-### Example 3: Send all beats from all genres
+### Example 4: Send all beats from all genres
 
 ```bash
 python main.py send --all

@@ -21,11 +21,19 @@ def main():
     organize_parser.add_argument('genre', help='Genre of the beat')
     organize_parser.add_argument('--no-send', action='store_true',
                                 help='Only organize, do not send via email')
+    organize_parser.add_argument('--artists', nargs='+', type=int,
+                                help='Artist indices to send to (e.g., --artists 1 2 3). Use "python main.py artists <genre>" to see available artists.')
 
     # Send command
     send_parser = subparsers.add_parser('send', help='Send beats by genre')
     send_parser.add_argument('--genre', help='Send beats of a specific genre')
     send_parser.add_argument('--all', action='store_true', help='Send all organized beats')
+    send_parser.add_argument('--artists', nargs='+', type=int,
+                           help='Artist indices to send to (e.g., --artists 1 2). Use "python main.py artists <genre>" to see available artists.')
+
+    # Artists command
+    artists_parser = subparsers.add_parser('artists', help='List available artists for a genre')
+    artists_parser.add_argument('genre', help='Genre to list artists for')
 
     # List command
     list_parser = subparsers.add_parser('list', help='List configuration and organized beats')
@@ -56,9 +64,14 @@ def main():
                 print(f"\n✓ Beat organized successfully!")
                 print(f"  Location: {organized_path}")
             else:
+                # Show available artists if selecting
+                if hasattr(args, 'artists') and args.artists:
+                    app.list_available_artists(genre)
+
                 # Organize and send
                 print(f"\n📁 Organizing and sending beat...")
-                results = app.organize_and_send_beat(beat_file, genre)
+                artist_indices = args.artists if hasattr(args, 'artists') else None
+                results = app.organize_and_send_beat(beat_file, genre, artist_indices)
 
                 print(f"\n✓ Operation completed!")
                 print(f"  Organized: {results['organized']}")
@@ -67,6 +80,10 @@ def main():
 
         elif args.command == 'send':
             if args.all:
+                if hasattr(args, 'artists') and args.artists:
+                    print("✗ Error: Cannot use --artists with --all")
+                    sys.exit(1)
+
                 print("\n📧 Sending all organized beats...")
                 results = app.send_all_beats()
 
@@ -77,8 +94,14 @@ def main():
 
             elif args.genre:
                 genre = args.genre
+
+                # Show available artists if selecting
+                if hasattr(args, 'artists') and args.artists:
+                    app.list_available_artists(genre)
+
                 print(f"\n📧 Sending {genre} beats...")
-                results = app.send_existing_beats_by_genre(genre)
+                artist_indices = args.artists if hasattr(args, 'artists') else None
+                results = app.send_existing_beats_by_genre(genre, artist_indices)
 
                 print(f"\n✓ Operation completed!")
                 print(f"  Emails sent: {results['sent']}")
@@ -88,6 +111,9 @@ def main():
                 print("✗ Error: Please specify --genre or --all")
                 send_parser.print_help()
                 sys.exit(1)
+
+        elif args.command == 'artists':
+            app.list_available_artists(args.genre)
 
         elif args.command == 'list':
             app.list_configuration()
