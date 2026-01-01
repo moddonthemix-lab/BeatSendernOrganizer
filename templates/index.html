@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat Organizer & Sender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎵 Beat Organizer & Sender</h1>
+            <p class="subtitle">Organize your beats by genre and send them to artists</p>
+            <div id="emailStatus" class="status-indicator"></div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('upload')">📤 Upload Beat</button>
+            <button class="tab-btn" onclick="showTab('library')">📚 Beat Library</button>
+            <button class="tab-btn" onclick="showTab('artists')">👥 Manage Artists</button>
+            <button class="tab-btn" onclick="showTab('send')">📧 Send Beats</button>
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="uploadTab" class="tab-content active">
+            <div class="card">
+                <h2>Upload & Organize Beat</h2>
+
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="beatFile">Select Beat File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="beatFile" name="file" accept=".mp3,.wav,.flac,.aiff,.aif,.ogg,.m4a,.wma" required>
+                            <span id="fileName">No file chosen</span>
+                        </div>
+                        <small>Supported: MP3, WAV, FLAC, AIFF, OGG, M4A, WMA</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genre">Select Genre</label>
+                        <select id="genre" name="genre" required onchange="loadGenreArtists()">
+                            <option value="">Choose a genre...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="artistsGroup" style="display: none;">
+                        <label>Select Artists (optional - leave empty to send to all)</label>
+                        <div id="artistsList" class="artists-list"></div>
+                        <small>Select specific artists or leave empty to send to all artists in this genre</small>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="sendEmail" name="sendEmail" checked>
+                            <span>Send email to selected artists after organizing</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span id="uploadBtnText">📤 Upload & Organize</span>
+                    </button>
+                </form>
+
+                <div id="uploadResult" class="result-message" style="display: none;"></div>
+                <div id="uploadProgress" class="progress-bar" style="display: none;">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library Tab -->
+        <div id="libraryTab" class="tab-content">
+            <div class="card">
+                <h2>Beat Library</h2>
+                <button onclick="loadBeats()" class="btn btn-secondary">🔄 Refresh</button>
+
+                <div id="beatsLibrary" class="beats-library">
+                    <p class="loading">Loading beats...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artists Tab -->
+        <div id="artistsTab" class="tab-content">
+            <div class="card">
+                <h2>Manage Artists</h2>
+
+                <div id="genresList" class="genres-list">
+                    <p class="loading">Loading artists...</p>
+                </div>
+
+                <button onclick="saveConfig()" class="btn btn-primary">💾 Save Changes</button>
+                <button onclick="loadConfig()" class="btn btn-secondary">🔄 Reload</button>
+            </div>
+        </div>
+
+        <!-- Send Tab -->
+        <div id="sendTab" class="tab-content">
+            <div class="card">
+                <h2>Send Beats to Artists</h2>
+
+                <div class="form-group">
+                    <label for="sendGenre">Select Genre</label>
+                    <select id="sendGenre" name="sendGenre" onchange="loadSendArtists()">
+                        <option value="">Choose a genre...</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="sendArtistsGroup" style="display: none;">
+                    <label>Select Artists (optional - leave empty to send to all)</label>
+                    <div id="sendArtistsList" class="artists-list"></div>
+                </div>
+
+                <button onclick="sendBeats()" class="btn btn-primary">📧 Send Beats</button>
+                <button onclick="sendAllBeats()" class="btn btn-warning">📧 Send All Beats (All Genres)</button>
+
+                <div id="sendResult" class="result-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

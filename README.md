@@ -2,8 +2,11 @@
 
 A Python application that organizes beat files by genre and automatically sends them to designated email addresses based on their genre.
 
+**🌐 Now with a beautiful Web Interface!** See [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md) for details.
+
 ## Features
 
+- **🌐 Web Interface**: Modern, beautiful web UI for all operations (NEW!)
 - **Genre-based Organization**: Automatically organizes beat files into folders by genre
 - **Artist Management**: Manage artists under each genre with names and email addresses
 - **Email Distribution**: Sends beats to configured artists based on genre
