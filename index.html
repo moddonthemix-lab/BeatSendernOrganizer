@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beat Sender - TRAP | R&B</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -212,6 +211,13 @@
         .setup-box h3 { color: #ffcc00; margin-bottom: 15px; }
         .setup-box p { color: #00ffff; margin-bottom: 10px; }
         .setup-box a { color: #00ff88; }
+        .setup-box code {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+        }
     </style>
 </head>
 <body>
@@ -222,9 +228,10 @@
         </header>
 
         <div class="setup-box">
-            <h3>⚡ Email Setup</h3>
-            <p>To enable email: Create free account at <a href="https://www.emailjs.com/" target="_blank">EmailJS.com</a></p>
-            <p>Then replace YOUR_PUBLIC_KEY, YOUR_SERVICE_ID, YOUR_TEMPLATE_ID in the code below</p>
+            <h3>⚡ Backend Setup Required</h3>
+            <p>To send beats with attachments, you need to run the Flask backend server.</p>
+            <p>Run: <code>python app.py</code> from the project directory</p>
+            <p>Configure your SMTP email settings in the .env file</p>
         </div>
 
         <div class="genre-section">
@@ -233,11 +240,14 @@
             <div class="artists-grid">
                 <div class="artist-card">
                     <h3>Laniyah West</h3>
-                    <p class="artist-email">laniyahwest@example.com</p>
-                    <form onsubmit="sendBeat(event, 'laniyahwest@example.com')">
+                    <form onsubmit="sendBeat(event, 'laniyah-west', 'trap')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -253,11 +263,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>Coco Bliss</h3>
-                    <p class="artist-email">cocobliss@example.com</p>
-                    <form onsubmit="sendBeat(event, 'cocobliss@example.com')">
+                    <form onsubmit="sendBeat(event, 'coco-bliss', 'trap')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -273,11 +286,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>FLogo</h3>
-                    <p class="artist-email">flogo@example.com</p>
-                    <form onsubmit="sendBeat(event, 'flogo@example.com')">
+                    <form onsubmit="sendBeat(event, 'flogo', 'trap')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -293,11 +309,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>Meladee</h3>
-                    <p class="artist-email">meladee@example.com</p>
-                    <form onsubmit="sendBeat(event, 'meladee@example.com')">
+                    <form onsubmit="sendBeat(event, 'meladee', 'trap')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -320,11 +339,14 @@
             <div class="artists-grid">
                 <div class="artist-card">
                     <h3>Breeze Kennedy</h3>
-                    <p class="artist-email">breezekennedy@example.com</p>
-                    <form onsubmit="sendBeat(event, 'breezekennedy@example.com')">
+                    <form onsubmit="sendBeat(event, 'breeze-kennedy', 'rnb')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -340,11 +362,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>BabyB</h3>
-                    <p class="artist-email">babyb@example.com</p>
-                    <form onsubmit="sendBeat(event, 'babyb@example.com')">
+                    <form onsubmit="sendBeat(event, 'babyb', 'rnb')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -360,11 +385,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>Girlfriend</h3>
-                    <p class="artist-email">girlfriend@example.com</p>
-                    <form onsubmit="sendBeat(event, 'girlfriend@example.com')">
+                    <form onsubmit="sendBeat(event, 'girlfriend', 'rnb')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -380,11 +408,14 @@
                 </div>
                 <div class="artist-card">
                     <h3>4batz</h3>
-                    <p class="artist-email">4batz@example.com</p>
-                    <form onsubmit="sendBeat(event, '4batz@example.com')">
+                    <form onsubmit="sendBeat(event, '4batz', 'rnb')">
                         <div class="form-group">
                             <label>Your Name</label>
                             <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Beat File (MP3/WAV)</label>
+                            <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" required>
                         </div>
                         <div class="form-group">
                             <label>Beat Title</label>
@@ -403,34 +434,60 @@
     </div>
 
     <script>
-        (function(){ emailjs.init("YOUR_PUBLIC_KEY"); })();
-        
-        function sendBeat(e, to) {
+        const API_URL = 'http://localhost:5000';
+
+        async function sendBeat(e, artistId, genre) {
             e.preventDefault();
             const form = e.target;
             const btn = form.querySelector('.btn');
             const msg = form.querySelector('.message');
-            
+
+            const beatFile = form.beat_file.files[0];
+            if (!beatFile) {
+                alert('Please select a beat file');
+                return;
+            }
+
             btn.disabled = true;
-            btn.textContent = '⏳ Sending...';
-            
-            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-                to_email: to,
-                from_name: form.name.value,
-                beat_title: form.title.value,
-                message: form.message.value
-            }).then(() => {
-                msg.textContent = '✅ Sent!';
-                msg.className = 'message success';
+            btn.textContent = '⏳ Uploading...';
+
+            const formData = new FormData();
+            formData.append('file', beatFile);
+            formData.append('genre', genre);
+            formData.append('artist_id', artistId);
+            formData.append('sender_name', form.name.value);
+            formData.append('beat_title', form.title.value);
+            formData.append('message', form.message.value || '');
+
+            try {
+                const response = await fetch(`${API_URL}/api/send-beat`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    msg.textContent = '✅ Beat sent successfully!';
+                    msg.className = 'message success';
+                    msg.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => msg.style.display = 'none', 5000);
+                } else {
+                    throw new Error(result.error || 'Failed to send beat');
+                }
+            } catch (error) {
+                msg.textContent = '❌ Error: ' + error.message;
+                msg.className = 'message';
                 msg.style.display = 'block';
-                form.reset();
-                setTimeout(() => msg.style.display = 'none', 3000);
-            }).catch(() => {
-                alert('Setup EmailJS first!');
-            }).finally(() => {
+                msg.style.background = 'rgba(255, 0, 0, 0.2)';
+                msg.style.borderColor = '#ff0000';
+                msg.style.color = '#ff0000';
+                setTimeout(() => msg.style.display = 'none', 5000);
+            } finally {
                 btn.disabled = false;
                 btn.textContent = '🚀 Send';
-            });
+            }
         }
     </script>
 </body>

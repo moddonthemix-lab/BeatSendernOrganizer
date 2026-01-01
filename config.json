@@ -1,31 +1,19 @@
 {
   "genres": {
-    "hip-hop": {
-      "artists": [
-        {"name": "Jay Producer", "email": "jay@example.com"},
-        {"name": "Mike Beats", "email": "mike@example.com"}
-      ]
-    },
     "trap": {
       "artists": [
-        {"name": "Trap Master", "email": "trapmaster@example.com"},
-        {"name": "Bass Heavy", "email": "bassheavy@example.com"}
+        {"id": "laniyah-west", "name": "Laniyah West", "email": "laniyahwest@example.com"},
+        {"id": "coco-bliss", "name": "Coco Bliss", "email": "cocobliss@example.com"},
+        {"id": "flogo", "name": "FLogo", "email": "flogo@example.com"},
+        {"id": "meladee", "name": "Meladee", "email": "meladee@example.com"}
       ]
     },
     "rnb": {
       "artists": [
-        {"name": "Soul Singer", "email": "soul@example.com"}
-      ]
-    },
-    "pop": {
-      "artists": [
-        {"name": "Pop Label A&R", "email": "ar@poplabel.com"}
-      ]
-    },
-    "electronic": {
-      "artists": [
-        {"name": "DJ Electro", "email": "electro@example.com"},
-        {"name": "Techno Producer", "email": "techno@example.com"}
+        {"id": "breeze-kennedy", "name": "Breeze Kennedy", "email": "breezekennedy@example.com"},
+        {"id": "babyb", "name": "BabyB", "email": "babyb@example.com"},
+        {"id": "girlfriend", "name": "Girlfriend", "email": "girlfriend@example.com"},
+        {"id": "4batz", "name": "4batz", "email": "4batz@example.com"}
       ]
     }
   },

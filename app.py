@@ -4,6 +4,7 @@ Flask Web Application for Beat Organizer and Sender
 """
 
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import os
@@ -11,6 +12,7 @@ import json
 from beat_sender import BeatSender
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['BEATS_FOLDER'] = 'beats'
@@ -229,6 +231,100 @@ def save_config():
             'success': True,
             'message': 'Configuration saved'
         })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/send-beat', methods=['POST'])
+def send_beat_to_artist():
+    """Send a beat file to a specific artist"""
+    try:
+        # Check if file is in request
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+
+        file = request.files['file']
+        genre = request.form.get('genre')
+        artist_id = request.form.get('artist_id')
+        sender_name = request.form.get('sender_name')
+        beat_title = request.form.get('beat_title')
+        message = request.form.get('message', '')
+
+        if not genre or not artist_id:
+            return jsonify({'error': 'Genre and artist_id are required'}), 400
+
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'Invalid file type. Allowed: ' + ', '.join(ALLOWED_EXTENSIONS)}), 400
+
+        # Save uploaded file
+        filename = secure_filename(file.filename)
+        upload_path = Path(app.config['UPLOAD_FOLDER']) / filename
+        file.save(str(upload_path))
+
+        # Load config to find artist
+        beat_sender = BeatSender()
+        config = beat_sender.config
+
+        # Find artist by ID
+        artist = None
+        genre_data = config.get('genres', {}).get(genre, {})
+        for a in genre_data.get('artists', []):
+            if a.get('id') == artist_id:
+                artist = a
+                break
+
+        if not artist:
+            upload_path.unlink()  # Clean up
+            return jsonify({'error': f'Artist {artist_id} not found in genre {genre}'}), 404
+
+        # Organize the beat
+        organized_path = beat_sender.organizer.organize_beat(str(upload_path), genre)
+
+        # Send email with custom message
+        from email_sender import EmailSender
+        email_sender = EmailSender()
+
+        # Create custom email body
+        custom_body = f"Hi {artist['name']},\n\n"
+        if sender_name:
+            custom_body += f"{sender_name} has sent you a new {genre.upper()} beat"
+        else:
+            custom_body += f"You've received a new {genre.upper()} beat"
+
+        if beat_title:
+            custom_body += f" titled '{beat_title}'"
+
+        custom_body += ".\n\n"
+
+        if message:
+            custom_body += f"Message: {message}\n\n"
+
+        custom_body += "Please find the beat attached.\n\nBest regards"
+
+        # Send the email
+        success = email_sender.send_beat(
+            to_email=artist['email'],
+            artist_name=artist['name'],
+            genre=genre,
+            beat_file=str(organized_path),
+            custom_subject=f"New {genre.upper()} Beat" + (f": {beat_title}" if beat_title else ""),
+            custom_body=custom_body
+        )
+
+        # Clean up uploaded file
+        upload_path.unlink()
+
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f'Beat sent successfully to {artist["name"]}',
+                'organized_path': str(organized_path)
+            })
+        else:
+            return jsonify({'error': 'Failed to send email'}), 500
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
