@@ -218,9 +218,113 @@
             color: #00ff88;
             font-family: 'Courier New', monospace;
         }
+
+        /* Login Screen Styles */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0e27;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #login-screen.hidden {
+            display: none;
+        }
+
+        .login-ufo {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 40px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.8));
+        }
+
+        .login-title {
+            font-size: 2em;
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .login-box {
+            background: rgba(0, 20, 40, 0.6);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .login-input {
+            width: 300px;
+            padding: 15px;
+            font-size: 1.2em;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .login-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .login-input::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+        }
+
+        .login-error {
+            color: #ff0000;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            display: none;
+        }
+
+        .main-container {
+            display: none;
+        }
+
+        .main-container.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <svg class="login-ufo" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="35" rx="40" ry="8" fill="#00ffff" opacity="0.3"/>
+            <ellipse cx="50" cy="30" rx="35" ry="15" fill="#00ff88"/>
+            <circle cx="50" cy="20" r="15" fill="#00ffff"/>
+            <circle cx="50" cy="18" r="8" fill="#0a0e27" opacity="0.3"/>
+            <circle cx="35" cy="35" r="2" fill="#ffcc00"/>
+            <circle cx="45" cy="37" r="2" fill="#ffcc00"/>
+            <circle cx="55" cy="37" r="2" fill="#ffcc00"/>
+            <circle cx="65" cy="35" r="2" fill="#ffcc00"/>
+        </svg>
+        <h1 class="login-title">sign in to use !</h1>
+        <div class="login-box">
+            <input type="password" id="password-input" class="login-input" placeholder="enter password..." autofocus>
+            <div id="login-error" class="login-error">❌ Incorrect password</div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-container" id="main-container">
     <div class="container">
         <header class="header">
             <h1>🎵 Beat Sender</h1>
@@ -408,8 +512,44 @@
             </div>
         </div>
     </div>
+    </div><!-- End main-container -->
 
     <script>
+        // Password Protection
+        const CORRECT_PASSWORD = 'queendog';
+        const passwordInput = document.getElementById('password-input');
+        const loginScreen = document.getElementById('login-screen');
+        const mainContainer = document.getElementById('main-container');
+        const loginError = document.getElementById('login-error');
+
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        function checkPassword() {
+            const enteredPassword = passwordInput.value;
+
+            if (enteredPassword === CORRECT_PASSWORD) {
+                // Correct password - show main app
+                loginScreen.classList.add('hidden');
+                mainContainer.classList.add('visible');
+                loginError.style.display = 'none';
+            } else {
+                // Wrong password - show error
+                loginError.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.style.borderColor = '#ff0000';
+
+                setTimeout(() => {
+                    passwordInput.style.borderColor = '#00ffff';
+                    loginError.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        // Beat Sender Application
         const API_URL = 'http://localhost:5000';
         const MAX_FILES = 5;
 
