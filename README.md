@@ -1,8 +1,10 @@
 # Beat Organizer and Sender
 
+🌐 **[View Live UI Demo](https://moddonthemix-lab.github.io/BeatSendernOrganizer/)**
+
 A Python application that organizes beat files by genre and automatically sends them to designated email addresses based on their genre.
 
-**🌐 Now with a beautiful Web Interface!** See [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md) for details.
+**🛸 Features a stunning UFO space-themed interface!** See [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md) for details.
 
 ## Features
 
