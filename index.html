@@ -242,8 +242,13 @@
             width: 200px;
             height: 200px;
             margin-bottom: 40px;
-            animation: float 3s ease-in-out infinite;
+            animation: login-ufo-float 3s ease-in-out infinite;
             filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.8));
+        }
+
+        @keyframes login-ufo-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
         .login-title {
