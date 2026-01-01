@@ -555,7 +555,11 @@
         }
 
         // Beat Sender Application
-        const API_URL = 'http://localhost:5000';
+        // Dynamic API URL - works locally and in production
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:5000'
+            : window.location.origin;
+
         const MAX_FILES = 5;
 
         async function sendBeat(e, artistId, genre) {

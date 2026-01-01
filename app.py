@@ -30,7 +30,7 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     """Main page"""
-    return render_template('index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/api/config', methods=['GET'])
 def get_config():
@@ -352,9 +352,13 @@ if __name__ == '__main__':
     print("🎵 Beat Organizer and Sender - Web Interface")
     print("="*60)
     print("\n📡 Server starting...")
-    print("🌐 Access the web interface at: http://localhost:5000")
+
+    # Get port from environment variable (for Railway) or use 5000
+    port = int(os.environ.get('PORT', 5000))
+
+    print(f"🌐 Access the web interface at: http://localhost:{port}")
     print("\n⚠️  Make sure your .env file is configured with SMTP credentials")
     print("   to enable email sending functionality.")
     print("\n" + "="*60 + "\n")
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=port)
