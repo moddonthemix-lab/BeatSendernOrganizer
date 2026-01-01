@@ -34,7 +34,7 @@ wheels/
 *~
 
 # Beats directory (optional - uncomment if you don't want to track beat files)
-# beats/
+beats/
 
 # Logs
 *.log
