@@ -246,6 +246,7 @@ def send_beat_to_artist():
         file = request.files['file']
         genre = request.form.get('genre')
         artist_id = request.form.get('artist_id')
+        subject = request.form.get('subject', '')
         message = request.form.get('message', '')
 
         if not genre or not artist_id:
@@ -294,13 +295,16 @@ def send_beat_to_artist():
 
         custom_body += "Please find the beat attached.\n\nBest regards"
 
+        # Use custom subject or default
+        email_subject = subject if subject else f"New {genre.upper()} Beats"
+
         # Send the email
         success = email_sender.send_beat(
             to_email=artist['email'],
             artist_name=artist['name'],
             genre=genre,
             beat_file=str(organized_path),
-            custom_subject=f"New {genre.upper()} Beats",
+            custom_subject=email_subject,
             custom_body=custom_body
         )
 

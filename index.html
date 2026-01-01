@@ -247,6 +247,10 @@
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
                         </div>
                         <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
+                        </div>
+                        <div class="form-group">
                             <label>Message (Optional)</label>
                             <textarea name="message" rows="4" placeholder="Add a personal message..."></textarea>
                         </div>
@@ -261,6 +265,10 @@
                             <label>Beat Files (MP3/WAV) - Up to 5 files</label>
                             <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" multiple required>
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
                         </div>
                         <div class="form-group">
                             <label>Message (Optional)</label>
@@ -279,6 +287,10 @@
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
                         </div>
                         <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
+                        </div>
+                        <div class="form-group">
                             <label>Message (Optional)</label>
                             <textarea name="message" rows="4" placeholder="Add a personal message..."></textarea>
                         </div>
@@ -293,6 +305,10 @@
                             <label>Beat Files (MP3/WAV) - Up to 5 files</label>
                             <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" multiple required>
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
                         </div>
                         <div class="form-group">
                             <label>Message (Optional)</label>
@@ -318,6 +334,10 @@
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
                         </div>
                         <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
+                        </div>
+                        <div class="form-group">
                             <label>Message (Optional)</label>
                             <textarea name="message" rows="4" placeholder="Add a personal message..."></textarea>
                         </div>
@@ -332,6 +352,10 @@
                             <label>Beat Files (MP3/WAV) - Up to 5 files</label>
                             <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" multiple required>
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
                         </div>
                         <div class="form-group">
                             <label>Message (Optional)</label>
@@ -350,6 +374,10 @@
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
                         </div>
                         <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
+                        </div>
+                        <div class="form-group">
                             <label>Message (Optional)</label>
                             <textarea name="message" rows="4" placeholder="Add a personal message..."></textarea>
                         </div>
@@ -364,6 +392,10 @@
                             <label>Beat Files (MP3/WAV) - Up to 5 files</label>
                             <input type="file" name="beat_file" accept=".mp3,.wav,.flac,.aiff,.ogg,.m4a,.wma" multiple required>
                             <small style="color: #00ff88; font-size: 0.75em; display: block; margin-top: 5px;">Select 1-5 beat files</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" name="subject" placeholder="Email subject line..." required>
                         </div>
                         <div class="form-group">
                             <label>Message (Optional)</label>
@@ -417,6 +449,7 @@
                 formData.append('file', file);
                 formData.append('genre', genre);
                 formData.append('artist_id', artistId);
+                formData.append('subject', form.subject.value);
                 formData.append('message', form.message.value || '');
 
                 try {
